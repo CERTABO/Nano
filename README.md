@@ -7,5 +7,5 @@ To install required libraries run:
 
 To launch application run:
 
-    "python3 main.py"
+    "python3 main.py --epaper"
 "# Nano" 
