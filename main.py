@@ -173,11 +173,11 @@ if __name__ == "__main__":
             "engine": "stockfish",
             "Depth": 1,
             "Threads": 1,
-            "Contempt": 24,
+            "Contempt": 0,
             "Ponder": False,
             "Skill Level": 20,
             "Strength": 100,
-            "weights": None,
+            "weights": "./",
             "is_rom": False,
         },
         "_analysis_engine": {
@@ -973,6 +973,10 @@ if __name__ == "__main__":
                 elif action == "pieces_placed":
                     switch_state("new_game")
                 elif action == "kings_removed":
+# changed by dso pgn file after kings remove
+					with open("/home/pi/mypgn/lastgame.pgn", "w", encoding="utf-8") as file:
+                        file.write(generate_pgn(SETTINGS))
+                    switch_state("game_resume")
                     if STATE == "new_game_start_remove_kings":
                         switch_state("new_game_start_place_pieces")
                 elif action == "start_position":
@@ -1123,12 +1127,12 @@ if __name__ == "__main__":
                     if cfg.args.epaper:
                         SETTINGS["_game_engine"]["engine"] = "maia"
                         SETTINGS["_game_engine"]["Depth"] = {
-                            "easy": 3,
+                            "easy": 1,
                             "medium": 4,
                             "hard": 5,
                         }[SETTINGS["difficulty"]]
                         SETTINGS["_analysis_engine"]["engine"] = "stockfish"
-                        SETTINGS["_analysis_engine"]["Depth"] = 12
+                        SETTINGS["_analysis_engine"]["Depth"] = 20
                     switch_state("game_resume")
 
                 else:
