@@ -2,6 +2,9 @@ from typing import Optional, Tuple, Union
 
 import chess
 import pygame
+#changed dso import OS libs
+import sys
+import os
 
 from utils.get_books_engines import get_book_list, get_engine_list
 from utils.logger import get_logger
@@ -34,7 +37,41 @@ def _row_0_to_8(row, piece="q", ignore_color=True):
         if row == f"{prefix}{piece}{suffix}":
             return i + 1
     return 0
+    
+# changed dso 14.02.2022  - add workink only with a black queen
+def _row_0_to_8_black(row, piece="q"):
+    """
+    Return integer between 1-8 depending on the placement of piece(queen) in a row, 0 if none
+    Used for epaper setting selection
+    """
 
+    for i in range(8):
+        prefix = ""
+        if i > 0:
+            prefix = i
+        suffix = ""
+        if i < 7:
+            suffix = 7 - i
+        if row == f"{prefix}{piece}{suffix}":
+            return i + 1
+    return 0
+# chsnged dso 14.02.2022 - add working only with the white queen
+def _row_0_to_8_white(row, piece="Q"):
+    """
+    Return integer between 1-8 depending on the placement of piece(queen) in a row, 0 if none
+    Used for epaper setting selection
+    """
+
+    for i in range(8):
+        prefix = ""
+        if i > 0:
+            prefix = i
+        suffix = ""
+        if i < 7:
+            suffix = 7 - i
+        if row == f"{prefix}{piece}{suffix}":
+            return i + 1
+    return 0
 
 def _row_0_to_71(row):
     """
@@ -573,11 +610,54 @@ class RemoteControlEpaper(BaseRemoteControl):
         extra_pieces = sum(_number_of_pieces(row) for row in board_rows[2:-2])
 
         # Check that only one extra queen is on the board
+ 
         if extra_pieces == 1:
             self.changed_settings = {}
-
+# changed by dso change maia networks via black queen 
+            queen_pos = _row_0_to_8_black(board_rows[2])
+            if 0 < queen_pos <= 7:
+                if queen_pos == 1:
+                    # maia 1100 network
+                    os.system('sudo cp /home/pi/main_sw_python3/engines/networks/maia-1100.pb /home/pi/main_sw_python3/engines/maia-network.pb')
+                    self.led_manager.flash_leds("corners")
+                    
+                if queen_pos == 2:
+                    # maia 1200 network
+                    os.system('sudo cp /home/pi/main_sw_python3/engines/networks/maia-1200.pb /home/pi/main_sw_python3/engines/maia-network.pb')
+                    self.led_manager.flash_leds("corners")
+                    
+                if queen_pos == 3:
+                    # maia 1300 network
+                    os.system('sudo cp /home/pi/main_sw_python3/engines/networks/maia-1300.pb /home/pi/main_sw_python3/engines/maia-network.pb')
+                    self.led_manager.flash_leds("corners")
+                    
+                if queen_pos == 4:
+                    # maia 1400 network
+                    os.system('sudo cp /home/pi/main_sw_python3/engines/networks/maia-1400.pb /home/pi/main_sw_python3/engines/maia-network.pb')
+                    self.led_manager.flash_leds("corners")
+                    
+                if queen_pos == 5:
+                    # maia 1500 network
+                    os.system('sudo cp /home/pi/main_sw_python3/engines/networks/maia-1500.pb /home/pi/main_sw_python3/engines/maia-network.pb')
+                    self.led_manager.flash_leds("corners")
+                    
+                if queen_pos == 6:
+                    # maia 1600 network
+                    os.system('sudo cp /home/pi/main_sw_python3/engines/networks/maia-1600.pb /home/pi/main_sw_python3/engines/maia-network.pb')#
+                    self.led_manager.flash_leds("corners")
+                    
+                if queen_pos == 7:
+                    # maia 1700 network
+                    os.system('sudo cp /home/pi/main_sw_python3/engines/networks/maia-1700.pb /home/pi/main_sw_python3/engines/maia-network.pb')
+                    self.led_manager.flash_leds("corners")
+                    
+                if queen_pos == 8:
+                    # maia 1800 network
+                    os.system('sudo cp /home/pi/main_sw_python3/engines/networks/maia-1800.pb /home/pi/main_sw_python3/engines/maia-network.pb')
+                    self.led_manager.flash_leds("corners")
+                    
             # Difficulty:
-            queen_pos = _row_0_to_8(board_rows[2])
+            queen_pos = _row_0_to_8_white(board_rows[2])
             if 0 < queen_pos <= 4:
                 self.change_settings(settings, "human_game", queen_pos == 1)
                 self.change_settings(
@@ -586,11 +666,11 @@ class RemoteControlEpaper(BaseRemoteControl):
                     ["easy", "easy", "medium", "hard"][queen_pos - 1],
                 )
             # Play as:
-            queen_pos = _row_0_to_8(board_rows[3])
+            queen_pos = _row_0_to_8_white(board_rows[3])
             if 0 < queen_pos <= 2:
                 self.change_settings(settings, "play_white", not queen_pos - 1)
             # Time:
-            queen_pos = _row_0_to_8(board_rows[4])
+            queen_pos = _row_0_to_8_white(board_rows[4])
             if 0 < queen_pos <= 4:
                 self.change_settings(
                     settings,
@@ -598,7 +678,7 @@ class RemoteControlEpaper(BaseRemoteControl):
                     ["unlimited", "blitz", "rapid", "classical"][queen_pos - 1],
                 )
             # Start game:
-            queen_pos = _row_0_to_8(board_rows[5])
+            queen_pos = _row_0_to_8_white(board_rows[5])
             if 0 < queen_pos <= 3:
                 if queen_pos == 1:
                     self.change_settings(settings, "use_board_position", False)
